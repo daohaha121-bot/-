@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>小范的AI进化路</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'tech-blue': '#2563eb',
+            'deep-gray': '#0f172a',
+            'card-bg': 'rgba(30, 41, 59, 0.6)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+
+    /* 背景动态光效 */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(37, 99, 235, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(37, 99, 235, 0.06) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* 毛玻璃卡片 */
+    .glass-card {
+      background: rgba(30, 41, 59, 0.55);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(37, 99, 235, 0.15);
+      border-radius: 16px;
+      transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* Bento 卡片悬停效果 */
+    .bento-card {
+      background: rgba(30, 41, 59, 0.55);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(37, 99, 235, 0.12);
+      border-radius: 20px;
+      transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(37, 99, 235, 0.06) inset;
+    }
+    .bento-card:hover {
+      transform: scale(1.03);
+      border-color: rgba(37, 99, 235, 0.4);
+      box-shadow: 0 12px 40px rgba(37, 99, 235, 0.15), 0 0 80px rgba(37, 99, 235, 0.06), 0 0 0 1px rgba(37, 99, 235, 0.12) inset;
+    }
+
+    /* 导航链接样式 */
+    .nav-link {
+      position: relative;
+      padding: 0.5rem 1.25rem;
+      font-weight: 500;
+      color: #94a3b8;
+      transition: color 0.3s ease;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%) scaleX(0);
+      width: 60%;
+      height: 2px;
+      background: #2563eb;
+      border-radius: 2px;
+      transition: transform 0.3s ease;
+    }
+    .nav-link:hover { color: #e2e8f0; }
+    .nav-link.active {
+      color: #60a5fa;
+    }
+    .nav-link.active::after {
+      transform: translateX(-50%) scaleX(1);
+    }
+
+    /* 内容区域切换动画 */
+    .tab-content {
+      display: none;
+      animation: fadeSlideIn 0.45s ease;
+    }
+    .tab-content.active { display: block; }
+
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ===== 垂直时间轴 ===== */
+    .timeline-wrapper {
+      position: relative;
+      padding-left: 3rem;
+    }
+    /* 主轴线 */
+    .timeline-wrapper::before {
+      content: '';
+      position: absolute;
+      left: 1.25rem;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg,
+        rgba(37, 99, 235, 0.5) 0%,
+        rgba(37, 99, 235, 0.3) 40%,
+        rgba(37, 99, 235, 0.15) 70%,
+        rgba(37, 99, 235, 0.05) 100%);
+      border-radius: 1px;
+    }
+
+    .timeline-node {
+      position: relative;
+      margin-bottom: 2.5rem;
+    }
+    .timeline-node:last-child { margin-bottom: 0; }
+
+    /* 时间标记点 */
+    .timeline-marker {
+      position: absolute;
+      left: -3rem;
+      top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      width: 2.5rem;
+    }
+    .timeline-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #2563eb;
+      border: 3px solid #0f172a;
+      box-shadow: 0 0 16px rgba(37, 99, 235, 0.5), 0 0 0 4px rgba(37, 99, 235, 0.15);
+      transition: all 0.3s ease;
+    }
+    .timeline-node:hover .timeline-dot {
+      box-shadow: 0 0 24px rgba(37, 99, 235, 0.7), 0 0 0 8px rgba(37, 99, 235, 0.2);
+      transform: scale(1.2);
+    }
+    .timeline-dot--future {
+      background: #334155;
+      border-color: #1e293b;
+      box-shadow: 0 0 8px rgba(100, 116, 139, 0.2);
+    }
+    .timeline-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #475569;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+
+    /* 节点内容区段 */
+    .node-section {
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(51, 65, 85, 0.4);
+    }
+    .node-section__header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .node-section__dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #3b82f6;
+      flex-shrink: 0;
+    }
+    .node-section__dot--dim {
+      background: #475569;
+    }
+
+    /* 节点 Badge */
+    .node-badge {
+      display: inline-block;
+      padding: 0.2rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .node-badge--task {
+      background: rgba(37, 99, 235, 0.2);
+      color: #60a5fa;
+      border: 1px solid rgba(37, 99, 235, 0.3);
+    }
+    .node-badge--future {
+      background: rgba(71, 85, 105, 0.2);
+      color: #64748b;
+      border: 1px solid rgba(71, 85, 105, 0.3);
+    }
+
+    /* 响应式：小屏缩进 */
+    @media (max-width: 640px) {
+      .timeline-wrapper {
+        padding-left: 2.25rem;
+      }
+      .timeline-wrapper::before {
+        left: 0.85rem;
+      }
+      .timeline-marker {
+        left: -2.25rem;
+        width: 1.75rem;
+      }
+      .timeline-dot {
+        width: 11px;
+        height: 11px;
+      }
+    }
+
+    /* 知识库标签 */
+    .kb-tag {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: rgba(37, 99, 235, 0.15);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      color: #93c5fd;
+      transition: all 0.2s ease;
+      cursor: default;
+    }
+    .kb-tag:hover {
+      background: rgba(37, 99, 235, 0.25);
+      border-color: rgba(37, 99, 235, 0.45);
+    }
+
+    /* ========== 聊天界面 ========== */
+    .chat-container {
+      display: flex;
+      height: calc(100vh - 200px);
+      min-height: 520px;
+      max-height: 700px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid rgba(37, 99, 235, 0.1);
+      position: relative;
+    }
+
+    .chat-sidebar {
+      width: 260px;
+      min-width: 260px;
+      background: rgba(15, 23, 42, 0.7);
+      border-right: 1px solid rgba(37, 99, 235, 0.1);
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      transition: all 0.3s ease;
+      overflow-y: auto;
+    }
+    .chat-sidebar.collapsed {
+      width: 0; min-width: 0; padding: 0; border-right: none; opacity: 0; pointer-events: none;
+    }
+
+    .chat-sidebar__new-btn {
+      display: flex; align-items: center; gap: 0.5rem; width: 100%;
+      padding: 0.65rem 1rem; border-radius: 10px; color: #93c5fd;
+      background: rgba(37, 99, 235, 0.15); border: 1px solid rgba(37, 99, 235, 0.25);
+      font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease; font-family: inherit;
+    }
+    .chat-sidebar__new-btn:hover {
+      background: rgba(37, 99, 235, 0.25); border-color: rgba(37, 99, 235, 0.45); color: #bfdbfe;
+    }
+
+    .chat-sidebar__label {
+      font-size: 0.7rem; font-weight: 600; color: #475569;
+      text-transform: uppercase; letter-spacing: 0.08em; margin: 1.25rem 0 0.5rem; padding: 0 0.25rem;
+    }
+
+    .chat-sidebar__list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; }
+
+    .chat-history-item {
+      padding: 0.6rem 0.75rem; border-radius: 8px; cursor: pointer;
+      font-size: 0.8rem; color: #94a3b8; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; justify-content: space-between;
+      transition: all 0.15s ease;
+    }
+    .chat-history-item:hover { background: rgba(37, 99, 235, 0.1); color: #cbd5e1; }
+    .chat-history-item.active { background: rgba(37, 99, 235, 0.15); color: #93c5fd; }
+
+    .chat-history-item__delete {
+      opacity: 0; background: none; border: none; color: #64748b;
+      cursor: pointer; padding: 2px; border-radius: 4px; transition: all 0.15s ease; flex-shrink: 0;
+      font-size: 0.7rem; line-height: 1;
+    }
+    .chat-history-item:hover .chat-history-item__delete { opacity: 1; }
+    .chat-history-item__delete:hover { color: #ef4444; background: rgba(239, 68, 68, 0.15); }
+
+    .chat-sidebar__footer { border-top: 1px solid rgba(51, 65, 85, 0.4); padding-top: 0.75rem; margin-top: 0.5rem; }
+
+    .chat-quick-prompt {
+      display: block; width: 100%; text-align: left; padding: 0.45rem 0.6rem;
+      background: transparent; border: none; color: #64748b;
+      font-size: 0.75rem; cursor: pointer; border-radius: 6px; transition: all 0.15s ease; font-family: inherit;
+    }
+    .chat-quick-prompt:hover { background: rgba(37, 99, 235, 0.1); color: #93c5fd; }
+
+    .chat-sidebar-toggle {
+      position: absolute; left: 0; top: 0.75rem; z-index: 5;
+      background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(37, 99, 235, 0.2);
+      border-radius: 0 8px 8px 0; color: #94a3b8; padding: 0.35rem 0.25rem;
+      cursor: pointer; transition: all 0.2s ease; display: none;
+    }
+    .chat-sidebar-toggle:hover { color: #e2e8f0; background: rgba(37, 99, 235, 0.2); }
+
+    .chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; position: relative; }
+
+    .chat-header {
+      padding: 1rem 1.5rem; border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+      display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;
+    }
+    .chat-header__title { font-size: 1rem; font-weight: 700; color: #f1f5f9; display: flex; align-items: center; gap: 0.5rem; }
+    .chat-header__subtitle { font-size: 0.75rem; color: #64748b; }
+
+    .chat-messages { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+
+    .chat-welcome { text-align: center; padding: 2rem 1rem; margin: auto; }
+    .chat-welcome__icon { color: #3b82f6; margin-bottom: 1rem; display: inline-block; }
+    .chat-welcome__title { font-size: 1.1rem; font-weight: 600; color: #e2e8f0; margin-bottom: 0.5rem; }
+    .chat-welcome__desc { font-size: 0.85rem; color: #64748b; max-width: 320px; margin: 0 auto; }
+
+    .chat-bubble {
+      max-width: 82%; padding: 0.85rem 1.1rem; line-height: 1.65;
+      font-size: 0.88rem; word-break: break-word; animation: chatBubbleIn 0.3s ease;
+    }
+    @keyframes chatBubbleIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .chat-bubble--user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff; border-radius: 18px 18px 4px 18px;
+      box-shadow: 0 2px 12px rgba(37, 99, 235, 0.25);
+    }
+    .chat-bubble--ai {
+      align-self: flex-start;
+      background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(37, 99, 235, 0.15); border-radius: 18px 18px 18px 4px; color: #e2e8f0;
+    }
+
+    .chat-bubble--typing .typewriter-cursor::after {
+      content: '|'; animation: typewriterBlink 0.8s step-end infinite;
+      color: #60a5fa; font-weight: 300;
+    }
+    @keyframes typewriterBlink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+
+    .chat-bubble__time {
+      font-size: 0.65rem; color: #64748b; margin-top: 0.4rem; text-align: left;
+    }
+    .chat-bubble--user .chat-bubble__time { color: rgba(255,255,255,0.5); text-align: right; }
+
+    .chat-input-area { padding: 0.75rem 1.5rem 1rem; border-top: 1px solid rgba(37, 99, 235, 0.1); flex-shrink: 0; }
+
+    .chat-input-wrapper {
+      display: flex; align-items: flex-end; gap: 0.5rem;
+      background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(37, 99, 235, 0.2);
+      border-radius: 16px; padding: 0.5rem 0.5rem 0.5rem 1.25rem; transition: all 0.25s ease;
+    }
+    .chat-input-wrapper:focus-within {
+      border-color: rgba(37, 99, 235, 0.5); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      background: rgba(30, 41, 59, 0.8);
+    }
+
+    .chat-input {
+      flex: 1; background: transparent; border: none; color: #e2e8f0;
+      font-size: 0.9rem; font-family: inherit; outline: none; resize: none;
+      max-height: 120px; line-height: 1.5; padding: 0.35rem 0;
+    }
+    .chat-input::placeholder { color: #475569; }
+
+    .chat-send-btn {
+      width: 36px; height: 36px; border-radius: 50%; border: none;
+      background: linear-gradient(135deg, #2563eb, #3b82f6); color: #fff;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s ease; flex-shrink: 0;
+    }
+    .chat-send-btn:hover { transform: scale(1.05); box-shadow: 0 0 16px rgba(37, 99, 235, 0.4); }
+    .chat-send-btn:active { transform: scale(0.95); }
+    .chat-send-btn--stop { background: rgba(239, 68, 68, 0.8); }
+    .chat-send-btn--stop:hover { background: #ef4444; box-shadow: 0 0 16px rgba(239, 68, 68, 0.4); }
+
+    .chat-input-hint { font-size: 0.7rem; color: #334155; text-align: center; margin-top: 0.5rem; }
+
+    .chat-loading-dots { display: flex; gap: 4px; padding: 0.5rem 0; }
+    .chat-loading-dots span {
+      width: 6px; height: 6px; border-radius: 50%; background: #3b82f6; animation: dotBounce 1.2s ease infinite;
+    }
+    .chat-loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .chat-loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes dotBounce { 0%,80%,100% { transform:translateY(0); opacity:.3; } 40% { transform:translateY(-6px); opacity:1; } }
+
+    .chat-stop-btn {
+      display: flex; align-items: center; gap: 0.25rem; padding: 0.35rem 0.75rem;
+      border-radius: 8px; border: 1px solid rgba(239, 68, 68, 0.3);
+      background: rgba(239, 68, 68, 0.1); color: #f87171;
+      font-size: 0.75rem; cursor: pointer; font-family: inherit; transition: all 0.2s ease;
+    }
+    .chat-stop-btn:hover { background: rgba(239, 68, 68, 0.2); }
+
+    @media (max-width: 768px) {
+      .chat-container { height: calc(100vh - 160px); min-height: 400px; max-height: none; }
+      .chat-sidebar {
+        position: absolute; left: 0; top: 0; bottom: 0; z-index: 10; width: 260px; min-width: 260px;
+      }
+      .chat-sidebar.collapsed { width: 0; min-width: 0; }
+      .chat-sidebar-toggle { display: block; }
+      .chat-messages { padding: 1rem; }
+      .chat-input-area { padding: 0.5rem 0.75rem 0.75rem; }
+      .chat-bubble { max-width: 90%; }
+    }
+
+    /* 滚动条 */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(37, 99, 235, 0.3);
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="relative z-10">
+
+  <!-- 导航栏 -->
+  <header class="fixed top-0 left-0 right-0 z-50">
+    <div class="glass-card mx-4 mt-4 md:mx-6 md:mt-6 px-6 py-3 flex items-center justify-between flex-wrap gap-2"
+         style="border-radius: 14px;">
+      <!-- Logo -->
+      <div class="flex items-center gap-3 flex-shrink-0">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold"
+             style="background: linear-gradient(135deg, #2563eb, #3b82f6); color: #fff;">
+          AI
+        </div>
+        <span class="text-sm font-semibold text-slate-200 tracking-wide">小范 · AI进化路</span>
+      </div>
+
+      <!-- 导航标签 -->
+      <nav class="flex items-center gap-1" role="tablist">
+        <button class="nav-link active" data-tab="card" role="tab" aria-selected="true">个人名片</button>
+        <button class="nav-link" data-tab="journal" role="tab" aria-selected="false">AI成长记录</button>
+        <button class="nav-link" data-tab="knowledge" role="tab" aria-selected="false">AI 智能知识库</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 主内容区域 -->
+  <main class="pt-28 md:pt-32 pb-12 px-4 md:px-8 max-w-5xl mx-auto relative z-10">
+
+    <!-- ==================== 个人名片 ==================== -->
+    <section class="tab-content active" id="tab-card" role="tabpanel">
+
+      <!-- Bento Grid -->
+      <div class="grid md:grid-cols-5 gap-5">
+
+        <!-- 区块1: 核心头像与身份卡 (左大卡片 跨3列2行) -->
+        <div class="bento-card md:col-span-3 md:row-span-2 p-6 md:p-8 flex flex-col justify-center"
+             style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(30, 41, 59, 0.4) 100%);">
+          <!-- 头像 -->
+          <div class="flex items-center gap-5 mb-6">
+            <div class="w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center text-2xl md:text-3xl font-bold flex-shrink-0 relative overflow-hidden"
+                 style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 40%, #7c3aed 100%);">
+              <span class="relative z-10">哈</span>
+              <div class="absolute inset-0 opacity-20"
+                   style="background: radial-gradient(circle at 30% 30%, #fff 0%, transparent 60%);"></div>
+            </div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-bold text-white tracking-wide">到哈哈</h2>
+              <p class="text-blue-300/80 text-sm md:text-base mt-1 font-medium">职业打工人</p>
+            </div>
+          </div>
+
+          <!-- 一句话宣言 -->
+          <div class="mt-2 pt-5 border-t border-slate-700/40">
+            <p class="text-slate-300 text-base md:text-lg leading-relaxed tracking-wide"
+               style="letter-spacing: 0.05em;">
+              " 用 AI 赋能行业，做一线的数字极客。 "
+            </p>
+          </div>
+
+          <!-- 底部装饰线 -->
+          <div class="mt-6 flex gap-1.5">
+            <div class="h-1 rounded-full flex-1" style="background: #2563eb;"></div>
+            <div class="h-1 rounded-full w-12" style="background: rgba(37, 99, 235, 0.4);"></div>
+            <div class="h-1 rounded-full w-6" style="background: rgba(37, 99, 235, 0.2);"></div>
+          </div>
+        </div>
+
+        <!-- 区块2: 核心技能徽章 (右上) -->
+        <div class="bento-card md:col-span-2 p-5 md:p-6">
+          <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-widest mb-4">
+            Core Skills / 核心技能
+          </h3>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/30 border border-slate-700/30 hover:border-blue-500/30 transition-colors duration-300">
+              <div class="w-9 h-9 rounded-lg flex items-center justify-center text-sm flex-shrink-0"
+                   style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.3), rgba(37, 99, 235, 0.1));">
+                🛡️
+              </div>
+              <span class="text-sm text-slate-200 font-medium">安全生产管理</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/30 border border-slate-700/30 hover:border-blue-500/30 transition-colors duration-300">
+              <div class="w-9 h-9 rounded-lg flex items-center justify-center text-sm flex-shrink-0"
+                   style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.3), rgba(37, 99, 235, 0.1));">
+                🏛️
+              </div>
+              <span class="text-sm text-slate-200 font-medium">党群青工建设</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/30 border border-slate-700/30 hover:border-blue-500/30 transition-colors duration-300">
+              <div class="w-9 h-9 rounded-lg flex items-center justify-center text-sm flex-shrink-0"
+                   style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.3), rgba(37, 99, 235, 0.1));">
+                🤖
+              </div>
+              <span class="text-sm text-slate-200 font-medium">AI 自动化脚本</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/30 border border-slate-700/30 hover:border-blue-500/30 transition-colors duration-300">
+              <div class="w-9 h-9 rounded-lg flex items-center justify-center text-sm flex-shrink-0"
+                   style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.3), rgba(37, 99, 235, 0.1));">
+                ⚡
+              </div>
+              <div class="flex flex-col">
+                <span class="text-sm text-slate-200 font-medium">Cursor/Claude Code 敏捷开发</span>
+                <span class="text-xs text-slate-500 mt-0.5">AI-native development workflow</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 区块3: 联系方式 (右下) -->
+        <div class="bento-card md:col-span-2 p-5 md:p-6">
+          <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-widest mb-4">
+            Contact / 联系方式
+          </h3>
+          <div class="space-y-3">
+            <!-- 邮箱 -->
+            <a href="mailto:2281143372@qq.com"
+               class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/30 border border-slate-700/30 hover:border-blue-500/30 transition-all duration-300 group">
+              <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors duration-300"
+                   style="background: rgba(37, 99, 235, 0.15);">
+                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <div class="min-w-0">
+                <p class="text-xs text-slate-500">邮箱</p>
+                <p class="text-sm text-slate-300 truncate group-hover:text-blue-300 transition-colors">2281143372@qq.com</p>
+              </div>
+            </a>
+
+            <!-- GitHub -->
+            <a href="#" target="_blank" rel="noopener"
+               class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/30 border border-slate-700/30 hover:border-blue-500/30 transition-all duration-300 group">
+              <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                   style="background: rgba(37, 99, 235, 0.15);">
+                <svg class="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+                </svg>
+              </div>
+              <div class="min-w-0">
+                <p class="text-xs text-slate-500">GitHub</p>
+                <p class="text-sm text-slate-300 group-hover:text-blue-300 transition-colors">github.com/daohaha</p>
+              </div>
+            </a>
+
+            <!-- 微信 -->
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/30 border border-slate-700/30">
+              <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                   style="background: rgba(37, 99, 235, 0.15);">
+                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+              </div>
+              <div class="min-w-0">
+                <p class="text-xs text-slate-500">微信</p>
+                <p class="text-sm text-slate-300">fyhjy6688</p>
+              </div>
+            </div>
+
+            <!-- 地址 -->
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/30 border border-slate-700/30">
+              <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                   style="background: rgba(37, 99, 235, 0.15);">
+                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+              </div>
+              <div class="min-w-0">
+                <p class="text-xs text-slate-500">地址</p>
+                <p class="text-sm text-slate-300">山东 · 济南</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== AI成长记录 ==================== -->
+    <section class="tab-content" id="tab-journal" role="tabpanel">
+      <h2 class="text-xl font-bold text-white mb-8 flex items-center gap-2">
+        <span class="w-1 h-5 rounded-full inline-block" style="background: #2563eb;"></span>
+        AI成长记录
+      </h2>
+
+      <div class="timeline-wrapper">
+
+        <!-- ========== 节点 1：科学上网 ========== -->
+        <div class="timeline-node">
+          <!-- 时间标记 -->
+          <div class="timeline-marker">
+            <div class="timeline-dot"></div>
+            <span class="timeline-label">Node 01</span>
+          </div>
+          <!-- 内容卡片 -->
+          <div class="bento-card p-5 md:p-7">
+            <!-- 核心任务 -->
+            <div class="mb-5">
+              <span class="node-badge node-badge--task">核心任务</span>
+              <h3 class="text-lg font-bold text-white mt-2 mb-2">科学上网的本质</h3>
+            </div>
+
+            <!-- 学到核心 -->
+            <div class="node-section">
+              <div class="node-section__header">
+                <span class="node-section__dot"></span>
+                <span class="text-xs font-semibold text-blue-400 uppercase tracking-wider">学到核心</span>
+              </div>
+              <p class="text-sm text-slate-300 leading-relaxed mt-2">
+                科学上网就是为了伪装成外国人访问网络。机场就是为了使得飞机能够飞行（提供翻墙服务等平台），节点就是机场具体的连接线路。
+              </p>
+            </div>
+
+            <!-- 深度复盘 -->
+            <div class="node-section">
+              <div class="node-section__header">
+                <span class="node-section__dot"></span>
+                <span class="text-xs font-semibold text-blue-400 uppercase tracking-wider">深度复盘</span>
+              </div>
+              <div class="text-sm text-slate-300 leading-relaxed mt-2 space-y-3">
+                <div>
+                  <p class="text-slate-400 text-xs mb-1">1、网站的访问过程</p>
+                  <p>打开 bilibili.com（域名），电脑开始进行 DNS 解析——将域名翻译为 IP 的系统（可能是 120.xxx.xxx.xxx），电脑访问到了，才出现了我们看到的页面。一切的网站实际部署在服务器。</p>
+                </div>
+                <div>
+                  <p class="text-slate-400 text-xs mb-1">2、淘宝为何多人同时访问不卡</p>
+                  <ul class="list-disc list-inside space-y-1 text-slate-400">
+                    <li>淘宝域名通过 DNS 轮询解析，一个域名可对应海量不同服务器 IP 地址</li>
+                    <li>不同地区用户自动解析到就近节点 IP，接入本地服务器集群</li>
+                    <li>再经负载均衡把流量分到无数后端业务服务器</li>
+                    <li>大量用户被分散到不同 IP 对应服务器，单台服务器压力极小</li>
+                  </ul>
+                </div>
+                <div>
+                  <p class="text-slate-400 text-xs mb-1">3、网络规格常见形式</p>
+                  <div class="grid grid-cols-2 gap-2 text-slate-400">
+                    <div class="bg-slate-800/40 rounded-lg p-2 text-xs"><span class="text-blue-400">服务器地址：</span>8.8.8.8 或 node.my-node.com</div>
+                    <div class="bg-slate-800/40 rounded-lg p-2 text-xs"><span class="text-blue-400">端口：</span>443 / 8443</div>
+                    <div class="bg-slate-800/40 rounded-lg p-2 text-xs"><span class="text-blue-400">协议：</span>VLESS / VMess / Trojan / Shadowsocks</div>
+                    <div class="bg-slate-800/40 rounded-lg p-2 text-xs"><span class="text-blue-400">认证信息：</span>UUID / 密码</div>
+                    <div class="bg-slate-800/40 rounded-lg p-2 text-xs"><span class="text-blue-400">传输方式：</span>TCP / WebSocket / gRPC</div>
+                    <div class="bg-slate-800/40 rounded-lg p-2 text-xs"><span class="text-blue-400">TLS：</span>是否开启加密证书</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 成果展示 -->
+            <div class="node-section">
+              <div class="node-section__header">
+                <span class="node-section__dot"></span>
+                <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">成果展示</span>
+              </div>
+              <div class="mt-3 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/15 text-sm text-slate-300">
+                ✅ 成功配置搬瓦工 VPS，电脑手机均实现科学上网
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== 节点 2：提示词工程 ========== -->
+        <div class="timeline-node">
+          <div class="timeline-marker">
+            <div class="timeline-dot"></div>
+            <span class="timeline-label">Node 02</span>
+          </div>
+          <div class="bento-card p-5 md:p-7">
+            <div class="mb-5">
+              <span class="node-badge node-badge--task">核心任务</span>
+              <h3 class="text-lg font-bold text-white mt-2 mb-2">提示词工程</h3>
+            </div>
+
+            <div class="node-section">
+              <div class="node-section__header">
+                <span class="node-section__dot"></span>
+                <span class="text-xs font-semibold text-blue-400 uppercase tracking-wider">学到核心</span>
+              </div>
+              <p class="text-sm text-slate-300 leading-relaxed mt-2">
+                写好提示词的最好方法就是站在机器的角度与机器对话，要对问题建立自己的框架，拆分成大类，写出粗略的提示词，然后用 AI 来进行润色提示词，获得较好的效果。这里提出一个概念——BRTRE 原则，比较通用。总之，多对话，多总结，你才能获得感受。
+              </p>
+            </div>
+
+            <div class="node-section">
+              <div class="node-section__header">
+                <span class="node-section__dot"></span>
+                <span class="text-xs font-semibold text-blue-400 uppercase tracking-wider">深度复盘</span>
+              </div>
+              <div class="text-sm text-slate-300 leading-relaxed mt-2 space-y-3">
+                <div>
+                  <p class="text-slate-400 text-xs mb-1">1、AI 本质</p>
+                  <p>看透 AI 的本质是什么，不要魔化，要合理利用 AI，多和 AI 沟通对话。网上短视频很多，更多的是吸引你的注意力。AI 时代，千万不要引起焦虑，因为很多东西你都不需要，它只是一个提效的工具。</p>
+                </div>
+                <div>
+                  <p class="text-slate-400 text-xs mb-1">2、Markdown 与 JSON 格式的学习</p>
+                  <div class="grid md:grid-cols-2 gap-3 mt-2">
+                    <div class="bg-slate-800/40 rounded-lg p-3">
+                      <p class="text-yellow-400 text-xs font-semibold mb-1">Markdown</p>
+                      <p class="text-xs text-slate-400">面向人的轻量化排版格式，用来规整文字、做整洁笔记。学会 Markdown 能彻底解决内容复制排版乱象，高效整理学习资料，统一文档样式。</p>
+                    </div>
+                    <div class="bg-slate-800/40 rounded-lg p-3">
+                      <p class="text-green-400 text-xs font-semibold mb-1">JSON</p>
+                      <p class="text-xs text-slate-400">面向程序与 AI 的标准化数据格式，用来规整、传输、存储各类数据。是后续 AI 精准操控、批量处理数据、对接各类工具接口、实现自动化操作的核心基础。</p>
+                    </div>
+                  </div>
+                  <p class="text-slate-400 text-xs mt-3 mb-1">JSON 格式示例：</p>
+                  <pre class="bg-slate-900/80 rounded-lg p-3 text-xs text-slate-300 overflow-x-auto"><code>{
+  "角色": "小红书爆款写手",
+  "Skills": ["心理学", "痛点挖掘", "emoji排版"],
+  "Task": "写一篇关于AI焦虑的笔记",
+  "Constraints": {
+    "Tone": "毒舌但真诚"
+  }
+}</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <div class="node-section">
+              <div class="node-section__header">
+                <span class="node-section__dot"></span>
+                <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">成果展示</span>
+              </div>
+              <div class="mt-3 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/15">
+                <p class="text-xs text-slate-400 mb-2">AI 图片生成作品（布偶猫）：</p>
+                <div class="bg-slate-800/60 rounded-lg p-4 text-center text-xs text-slate-500 border border-dashed border-slate-700">
+                  🖼️ 图片预留位 — 一只毛茸茸的、橘色重点色的布偶幼猫，正在一个户外绿色草坪上做全身伸懒腰的动作。它的背部拱起，爪子前伸。温暖的夕阳余晖洒在它身上，营造出金色和柔和的光影，使毛发看起来非常蓬松真实。背景是虚化的草地和花园。
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== 节点 3：图片/视频生成 + HTTP请求 ========== -->
+        <div class="timeline-node">
+          <div class="timeline-marker">
+            <div class="timeline-dot"></div>
+            <span class="timeline-label">Node 03</span>
+          </div>
+          <div class="bento-card p-5 md:p-7">
+
+            <!-- 子任务 A：图片/视频生成 -->
+            <div class="mb-6 pb-6 border-b border-slate-700/40">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="node-badge node-badge--task">核心任务 A</span>
+              </div>
+              <h3 class="text-lg font-bold text-white mb-4">图片 / 视频生成</h3>
+
+              <div class="node-section">
+                <div class="node-section__header">
+                  <span class="node-section__dot"></span>
+                  <span class="text-xs font-semibold text-blue-400 uppercase tracking-wider">学到核心</span>
+                </div>
+                <p class="text-sm text-slate-300 leading-relaxed mt-2">
+                  依旧是框架思维。明确生成图片的要素（核心主体 + 细节特征 + 环境背景 + 光影/色调 + 渲染/相机参数）和视频的要素（背景，主体，运镜，画风，客体，环境），写出粗略的提示词，然后利用 AI 对提示词进行优化，提高生成质量。
+                </p>
+              </div>
+
+              <div class="node-section">
+                <div class="node-section__header">
+                  <span class="node-section__dot"></span>
+                  <span class="text-xs font-semibold text-blue-400 uppercase tracking-wider">深度复盘：ComfyUI</span>
+                </div>
+                <div class="text-sm text-slate-300 leading-relaxed mt-2 space-y-3">
+                  <p>ComfyUI 是一个开源、节点式的 AI 工作流引擎，最常用于 Stable Diffusion 等扩散模型的可视化创作，也支持视频、音频和 3D 生成。你可以把它想象成 AI 创作的<strong class="text-white">"可视化编程画布"</strong>——所有生成步骤都变成一个个"乐高积木块"（节点），拖拽连接就能拼出任意复杂的创作流程。</p>
+                  <div class="grid md:grid-cols-3 gap-3 mt-3">
+                    <div class="bg-slate-800/40 rounded-lg p-3">
+                      <p class="text-blue-400 text-xs font-semibold mb-1">节点式操作</p>
+                      <p class="text-xs text-slate-400">把 AI 生成拆成独立功能节点，像画流程图一样拼出工作流，全程可视化、可修改。</p>
+                    </div>
+                    <div class="bg-slate-800/40 rounded-lg p-3">
+                      <p class="text-purple-400 text-xs font-semibold mb-1">极致可控</p>
+                      <p class="text-xs text-slate-400">支持分支、循环、多模型混用，能精确调整每一步参数，生成效果完全由你掌控。</p>
+                    </div>
+                    <div class="bg-slate-800/40 rounded-lg p-3">
+                      <p class="text-emerald-400 text-xs font-semibold mb-1">高效复用</p>
+                      <p class="text-xs text-slate-400">工作流可保存为文件一键分享/导入；生成的图片自带"流程元数据"，拖回即可还原完整创作过程。</p>
+                    </div>
+                  </div>
+                  <p class="text-slate-400 text-xs mt-2">总结：ComfyUI 不是简单的"AI 绘图工具"，而是 AI 创作的<strong class="text-white">"操作系统"</strong>——把 AI 生成的"控制权"彻底交还给用户。</p>
+                </div>
+              </div>
+
+              <div class="node-section">
+                <div class="node-section__header">
+                  <span class="node-section__dot"></span>
+                  <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">成果展示</span>
+                </div>
+                <div class="mt-3 grid md:grid-cols-2 gap-3">
+                  <div class="bg-slate-800/60 rounded-lg p-4 text-center text-xs text-slate-500 border border-dashed border-slate-700">
+                    🖼️ 图片预留位 — 方便以后上传
+                  </div>
+                  <div class="bg-slate-800/60 rounded-lg p-4 text-center text-xs text-slate-500 border border-dashed border-slate-700">
+                    🎬 视频预留位 — 方便以后上传
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 子任务 B：HTTP请求 -->
+            <div>
+              <div class="flex items-center gap-2 mb-3">
+                <span class="node-badge node-badge--task">核心任务 B</span>
+              </div>
+              <h3 class="text-lg font-bold text-white mb-4">HTTP 请求</h3>
+
+              <div class="node-section">
+                <div class="node-section__header">
+                  <span class="node-section__dot"></span>
+                  <span class="text-xs font-semibold text-blue-400 uppercase tracking-wider">学到核心</span>
+                </div>
+                <p class="text-sm text-slate-300 leading-relaxed mt-2">
+                  生图软件常规运行逻辑：客户端文字发送 → 前端 → 后端 → HTTP请求 → 大模型 → 生成 → HTTP请求 → 前端。这里面运行了两次 HTTP 请求。利用 AI 把生图时后端实际产生的代码直接放到终端里面，同样可以得到想要的图片。
+                </p>
+              </div>
+
+              <div class="node-section">
+                <div class="node-section__header">
+                  <span class="node-section__dot"></span>
+                  <span class="text-xs font-semibold text-blue-400 uppercase tracking-wider">深度复盘：API中转站的核心逻辑</span>
+                </div>
+                <div class="text-sm text-slate-300 leading-relaxed mt-2 space-y-3">
+                  <p><span class="text-slate-400 text-xs">一、API 本质：</span>AI 的"后厨窗口"，跳过官方网页界面，直接调用模型能力，按用量计费、更便宜灵活。</p>
+                  <p><span class="text-slate-400 text-xs">二、四大角色（合规性从高到低）：</span>官方企业直签 → 云厂商通道 → 共享账号池（灰色暴利、水最深） → 聚合平台/批发商</p>
+                  <p><span class="text-slate-400 text-xs">三、中转技术核心 8 步流程：</span>用户请求 → 鉴权（验 Key/余额）→ 限流 → 入队 → 调度（选健康/充裕/就近账号）→ 上游调用 → 回包 → 重试/熔断</p>
+                  <p><span class="text-slate-400 text-xs">四、暴利核心：</span>前端定价套路（超低价引流、虚标额度、模型倍率定价）+ 后端技术压成本（调度算法、超卖、模型偷换、损耗控制）</p>
+                  <div class="bg-slate-800/40 rounded-lg p-3 text-xs text-slate-400">
+                    <p class="text-white font-semibold mb-1">核心结论</p>
+                    <ul class="list-disc list-inside space-y-1">
+                      <li>低价 API 的"便宜"，本质是违规成本、损耗成本、信息差的转移</li>
+                      <li>普通用户避坑三问：账号渠道是否清晰？价格是否低于合理成本？服务是否稳定可追溯？</li>
+                      <li>AI 时代，独立思考判断力，比廉价算力更重要</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="node-section">
+                <div class="node-section__header">
+                  <span class="node-section__dot"></span>
+                  <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">成果展示</span>
+                </div>
+                <div class="mt-3 grid md:grid-cols-2 gap-3">
+                  <div class="bg-slate-800/60 rounded-lg p-4 text-center text-xs text-slate-500 border border-dashed border-slate-700">
+                    📝 代码预留位 — 方便以后粘贴
+                  </div>
+                  <div class="bg-slate-800/60 rounded-lg p-4 text-center text-xs text-slate-500 border border-dashed border-slate-700">
+                    🖼️ 照片预留位 — 方便以后上传
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== 节点 4：预留占位 ========== -->
+        <div class="timeline-node">
+          <div class="timeline-marker">
+            <div class="timeline-dot timeline-dot--future"></div>
+            <span class="timeline-label text-slate-600">Node 04</span>
+          </div>
+          <div class="bento-card p-5 md:p-7 opacity-60">
+            <div class="mb-5">
+              <span class="node-badge node-badge--future">即将解锁</span>
+              <h3 class="text-lg font-bold text-slate-500 mt-2 mb-2">下一阶段 · 敬请期待</h3>
+            </div>
+            <div class="node-section">
+              <div class="node-section__header">
+                <span class="node-section__dot node-section__dot--dim"></span>
+                <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">核心任务</span>
+              </div>
+              <p class="text-sm text-slate-600 leading-relaxed mt-2">等待新的 AI 学习任务...</p>
+            </div>
+            <div class="node-section">
+              <div class="node-section__header">
+                <span class="node-section__dot node-section__dot--dim"></span>
+                <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">学到核心</span>
+              </div>
+              <p class="text-sm text-slate-600 leading-relaxed mt-2">——</p>
+            </div>
+            <div class="node-section">
+              <div class="node-section__header">
+                <span class="node-section__dot node-section__dot--dim"></span>
+                <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">深度复盘</span>
+              </div>
+              <p class="text-sm text-slate-600 leading-relaxed mt-2">——</p>
+            </div>
+            <div class="node-section">
+              <div class="node-section__header">
+                <span class="node-section__dot node-section__dot--dim"></span>
+                <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">成果展示</span>
+              </div>
+              <div class="mt-3 bg-slate-800/30 rounded-lg p-4 text-center text-xs text-slate-600 border border-dashed border-slate-700/50">
+                占位预留 — 持续进化中...
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== AI 智能知识库 - 聊天界面 ==================== -->
+    <section class="tab-content" id="tab-knowledge" role="tabpanel">
+
+      <div class="chat-container">
+
+        <!-- 左侧边栏 -->
+        <aside class="chat-sidebar" id="chatSidebar">
+          <button class="chat-sidebar__new-btn" id="newChatBtn">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            <span>新对话</span>
+          </button>
+
+          <div class="chat-sidebar__label">历史对话</div>
+          <div class="chat-sidebar__list" id="chatHistoryList"></div>
+
+          <div class="chat-sidebar__footer">
+            <div class="chat-sidebar__label">快速提问</div>
+            <button class="chat-quick-prompt" data-prompt="什么是 Transformer 架构？">Transformer 架构原理</button>
+            <button class="chat-quick-prompt" data-prompt="Prompt Engineering 有哪些核心技巧？">Prompt Engineering 技巧</button>
+            <button class="chat-quick-prompt" data-prompt="AI Agent 的 ReAct 范式是什么？">AI Agent ReAct 范式</button>
+            <button class="chat-quick-prompt" data-prompt="RAG 检索增强生成的原理和最佳实践">RAG 原理与实践</button>
+            <button class="chat-quick-prompt" data-prompt="Claude Code 的核心功能和使用技巧">Claude Code 实战</button>
+          </div>
+        </aside>
+
+        <!-- 侧边栏切换按钮 (移动端) -->
+        <button class="chat-sidebar-toggle" id="sidebarToggle" title="切换侧边栏">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+
+        <!-- 主聊天窗口 -->
+        <div class="chat-main">
+          <div class="chat-header">
+            <h2 class="chat-header__title">
+              <span class="w-1.5 h-4 rounded-full inline-block" style="background: #2563eb;"></span>
+              AI 智能知识库
+            </h2>
+            <span class="chat-header__subtitle">基于你的知识库智能问答</span>
+          </div>
+
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-welcome" id="chatWelcome">
+              <div class="chat-welcome__icon">
+                <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z"/>
+                </svg>
+              </div>
+              <h3 class="chat-welcome__title">你好，我是你的 AI 知识助手</h3>
+              <p class="chat-welcome__desc">可以问我关于 LLM、Prompt Engineering、AI Agent、RAG 等任何 AI 相关问题</p>
+            </div>
+          </div>
+
+          <div class="chat-input-area">
+            <div class="chat-input-wrapper">
+              <textarea class="chat-input" id="chatInput" placeholder="输入你的问题，Enter 发送，Shift+Enter 换行..." rows="1"></textarea>
+              <button class="chat-send-btn" id="sendBtn" title="发送">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+              </button>
+            </div>
+            <p class="chat-input-hint">AI 知识库可能产生不准确信息，请注意甄别</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="text-center py-6 text-xs text-slate-600 relative z-10">
+    © 2026 小范的AI进化路 · Built with Claude Code
+  </footer>
+
+  <!-- 标签切换 + 聊天逻辑 -->
+  <script>
+    (function() {
+      // ========== 标签切换 ==========
+      const navLinks = document.querySelectorAll('.nav-link');
+      const tabContents = document.querySelectorAll('.tab-content');
+
+      navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          const targetTab = link.getAttribute('data-tab');
+          navLinks.forEach(l => { l.classList.remove('active'); l.setAttribute('aria-selected', 'false'); });
+          link.classList.add('active');
+          link.setAttribute('aria-selected', 'true');
+          tabContents.forEach(tc => tc.classList.remove('active'));
+          const target = document.getElementById('tab-' + targetTab);
+          if (target) { target.classList.add('active'); }
+        });
+      });
+
+      // ========== 方案B：聊天逻辑（从 GitHub 仓库拉取原始数据库做本地关键词匹配） ==========
+      // ★★★ GitHub Raw 数据库地址 —— 如需更换文件路径，修改此处 ★★★
+      const KNOWLEDGE_RAW_URL = 'https://raw.githubusercontent.com/daohaha121-bot/-/main/knowledge/learning-notes.txt';
+
+      const chatMessages = document.getElementById('chatMessages');
+      const chatInput = document.getElementById('chatInput');
+      const sendBtn = document.getElementById('sendBtn');
+      const newChatBtn = document.getElementById('newChatBtn');
+      const chatHistoryList = document.getElementById('chatHistoryList');
+      const chatSidebar = document.getElementById('chatSidebar');
+      const sidebarToggle = document.getElementById('sidebarToggle');
+      const quickPrompts = document.querySelectorAll('.chat-quick-prompt');
+
+      let conversations = [];
+      let activeConvId = null;
+      let isGenerating = false;
+      let abortController = null;
+      let typewriterTimer = null;
+      let knowledgeCache = null; // 缓存已拉取的知识库文本，避免重复请求
+
+      // ========== 对话管理 ==========
+      function createConversation() {
+        return { id: Date.now().toString(36), title: '新对话', messages: [], createdAt: new Date() };
+      }
+
+      function newConversation() {
+        if (activeConvId) {
+          const conv = conversations.find(c => c.id === activeConvId);
+          if (conv && conv.messages.length === 0) return;
+        }
+        const conv = createConversation();
+        conversations.unshift(conv);
+        activeConvId = conv.id;
+        renderChat();
+        renderHistory();
+        chatInput.focus();
+      }
+
+      function deleteConversation(id, e) {
+        e.stopPropagation();
+        conversations = conversations.filter(c => c.id !== id);
+        if (activeConvId === id) {
+          activeConvId = conversations.length > 0 ? conversations[0].id : null;
+          if (!activeConvId) { const conv = createConversation(); conversations.push(conv); activeConvId = conv.id; }
+        }
+        renderChat();
+        renderHistory();
+      }
+
+      function switchConversation(id) {
+        activeConvId = id;
+        renderChat();
+      }
+
+      function getActiveConv() {
+        return conversations.find(c => c.id === activeConvId);
+      }
+
+      // ========== 渲染 ==========
+      function renderHistory() {
+        chatHistoryList.innerHTML = conversations.map(c =>
+          `<div class="chat-history-item${c.id === activeConvId ? ' active' : ''}" data-id="${c.id}">
+            <span class="chat-history-item__title" style="overflow:hidden;text-overflow:ellipsis;">${escapeHtml(c.title)}</span>
+            <button class="chat-history-item__delete" data-id="${c.id}" title="删除">✕</button>
+          </div>`
+        ).join('');
+
+        chatHistoryList.querySelectorAll('.chat-history-item').forEach(item => {
+          item.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('chat-history-item__delete')) {
+              switchConversation(item.dataset.id);
+            }
+          });
+        });
+        chatHistoryList.querySelectorAll('.chat-history-item__delete').forEach(btn => {
+          btn.addEventListener('click', (e) => deleteConversation(btn.dataset.id, e));
+        });
+      }
+
+      function renderChat() {
+        const conv = getActiveConv();
+        chatMessages.innerHTML = '';
+
+        if (!conv || conv.messages.length === 0) {
+          chatMessages.innerHTML = `
+            <div class="chat-welcome" id="chatWelcome">
+              <div class="chat-welcome__icon">
+                <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z"/>
+                </svg>
+              </div>
+              <h3 class="chat-welcome__title">你好，我是你的 AI 知识助手</h3>
+              <p class="chat-welcome__desc">基于你的 GitHub 云端知识库，实时拉取教学卡片复盘内容进行智能问答</p>
+            </div>`;
+          return;
+        }
+
+        conv.messages.forEach(msg => {
+          appendMessageBubble(msg.role, msg.content, false);
+        });
+        scrollToBottom();
+      }
+
+      function appendMessageBubble(role, content, animate) {
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-bubble chat-bubble--' + (role === 'user' ? 'user' : 'ai');
+        if (role === 'ai' && animate) {
+          bubble.classList.add('chat-bubble--typing');
+          bubble.innerHTML = '<span class="typewriter-cursor"></span>';
+        } else {
+          bubble.textContent = content;
+        }
+        const time = document.createElement('div');
+        time.className = 'chat-bubble__time';
+        time.textContent = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+        bubble.appendChild(time);
+        chatMessages.appendChild(bubble);
+        return bubble;
+      }
+
+      // ========== 打字机效果 ==========
+      function startTypewriter(element) {
+        let buffer = '';
+        let displayed = 0;
+
+        function tick() {
+          if (displayed < buffer.length) {
+            const chunkSize = Math.max(1, Math.floor((buffer.length - displayed) / 10) || 1);
+            const chunk = buffer.slice(displayed, displayed + chunkSize);
+            displayed += chunkSize;
+            const cursor = element.querySelector('.typewriter-cursor');
+            if (cursor) {
+              cursor.before(document.createTextNode(chunk));
+            } else {
+              element.insertBefore(document.createTextNode(chunk), element.lastChild);
+            }
+            scrollToBottom();
+            typewriterTimer = setTimeout(tick, 25 + Math.random() * 20);
+          }
+        }
+
+        return {
+          feed(text) { buffer += text; },
+          start() { tick(); },
+          finish() {
+            clearTimeout(typewriterTimer);
+            if (element) {
+              const cursor = element.querySelector('.typewriter-cursor');
+              if (cursor) cursor.remove();
+              element.classList.remove('chat-bubble--typing');
+              const textNodes = Array.from(element.childNodes).filter(n => n.nodeType === 3).map(n => n.textContent).join('');
+              if (textNodes.length < buffer.length) {
+                if (element.querySelector('.chat-bubble__time')) {
+                  element.querySelector('.chat-bubble__time').before(document.createTextNode(buffer.slice(textNodes.length)));
+                }
+              }
+            }
+          },
+          getBuffer() { return buffer; }
+        };
+      }
+
+      // ========== 方案B核心：从 GitHub Raw 拉取知识库 + 本地关键词匹配 ==========
+      async function fetchKnowledgeBase() {
+        if (knowledgeCache) return knowledgeCache;
+
+        const response = await fetch(KNOWLEDGE_RAW_URL, { cache: 'no-cache' });
+        if (!response.ok) {
+          throw new Error('知识库加载失败 (HTTP ' + response.status + ')，请检查 GitHub 仓库文件是否存在');
+        }
+        const rawText = await response.text();
+        // 解析文本，按 "=== 教学卡片" 分割为区段
+        knowledgeCache = parseSections(rawText);
+        return knowledgeCache;
+      }
+
+      function parseSections(rawText) {
+        const sections = [];
+        const regex = /=== 教学卡片(\d+)：(.+?) ===\s*\n([\s\S]*?)(?=\n=== 教学卡片|\n*$)/g;
+        let match;
+        while ((match = regex.exec(rawText)) !== null) {
+          sections.push({
+            id: match[1],
+            title: match[2].trim(),
+            content: match[3].trim()
+          });
+        }
+        return sections;
+      }
+
+      function findBestMatch(query, sections) {
+        if (!sections.length) return '知识库为空，请先在 knowledge/learning-notes.txt 中填充内容。';
+
+        // 提取用户问题的关键词
+        const keywords = query
+          .replace(/[？?！!，,。.、\s]+/g, ' ')
+          .split(' ')
+          .filter(k => k.length > 1);
+
+        if (keywords.length === 0) {
+          return formatAllSections(sections, '你好！以下是知识库中所有教学卡片的内容概览：');
+        }
+
+        // 对每个卡片区段打分
+        let bestSection = null;
+        let bestScore = 0;
+
+        for (const section of sections) {
+          let score = 0;
+          const searchText = section.title + ' ' + section.content;
+          for (const kw of keywords) {
+            if (searchText.includes(kw)) {
+              score += kw.length * (searchText.indexOf(kw) < section.title.length ? 3 : 1);
+            }
+          }
+          if (score > bestScore) {
+            bestScore = score;
+            bestSection = section;
+          }
+        }
+
+        if (bestSection && bestScore > 0) {
+          return formatSection(bestSection);
+        }
+
+        return formatAllSections(sections,
+          '未找到与"' + query + '"直接匹配的教学卡片。\n\n以下是知识库全部内容，你可以尝试用"科学上网"、"提示词"、"ComfyUI"、"HTTP请求"等关键词搜索：');
+      }
+
+      function formatSection(s) {
+        const lines = s.content.split('\n').filter(l => l.trim());
+        let out = '教学卡片' + s.id + '：' + s.title + '\n' + '─'.repeat(28) + '\n';
+        for (const line of lines) {
+          const colonIdx = line.indexOf('：');
+          if (colonIdx > 0) {
+            const label = line.slice(0, colonIdx);
+            const value = line.slice(colonIdx + 1);
+            out += '\n' + label + '：\n  ' + value + '\n';
+          } else {
+            out += '\n' + line + '\n';
+          }
+        }
+        return out.trim();
+      }
+
+      function formatAllSections(sections, header) {
+        let out = header + '\n\n';
+        for (const s of sections) {
+          out += '• 教学卡片' + s.id + '：' + s.title + '\n';
+        }
+        out += '\n你可以输入具体关键词（如"科学上网"、"提示词"、"ComfyUI"等）来查看详细内容。';
+        return out;
+      }
+
+      // ========== 发送消息（方案B联动 GitHub 数据库） ==========
+      async function sendMessage(text) {
+        if (isGenerating || !text.trim()) return;
+
+        const conv = getActiveConv();
+        if (!conv) return;
+
+        const welcome = chatMessages.querySelector('.chat-welcome');
+        if (welcome) welcome.remove();
+
+        if (conv.messages.length === 0) {
+          conv.title = text.trim().slice(0, 30) + (text.trim().length > 30 ? '...' : '');
+          renderHistory();
+        }
+
+        conv.messages.push({ role: 'user', content: text.trim() });
+        appendMessageBubble('user', text.trim(), false);
+        scrollToBottom();
+        chatInput.value = '';
+        chatInput.style.height = 'auto';
+
+        const aiBubble = appendMessageBubble('ai', '', true);
+        conv.messages.push({ role: 'assistant', content: '' });
+
+        const tw = startTypewriter(aiBubble);
+        tw.start();
+
+        isGenerating = true;
+        updateSendButton();
+
+        try {
+          abortController = new AbortController();
+
+          // 方案B：从 GitHub 拉取原始数据库文本 + 本地关键词匹配
+          const sections = await fetchKnowledgeBase();
+          const answer = findBestMatch(text.trim(), sections);
+
+          tw.feed(answer);
+          tw.finish();
+          conv.messages[conv.messages.length - 1].content = answer;
+
+        } catch (err) {
+          if (err.name === 'AbortError') {
+            tw.finish();
+            conv.messages[conv.messages.length - 1].content = tw.getBuffer() || '(已停止)';
+          } else {
+            tw.finish();
+            const errorMsg = '加载知识库失败：' + err.message + '\n\n请确认：\n1. knowledge/learning-notes.txt 已推送到 GitHub\n2. Raw 地址正确：' + KNOWLEDGE_RAW_URL;
+            conv.messages[conv.messages.length - 1].content = errorMsg;
+            const cursor = aiBubble.querySelector('.typewriter-cursor');
+            if (cursor) cursor.remove();
+            aiBubble.classList.remove('chat-bubble--typing');
+            aiBubble.insertBefore(document.createTextNode(errorMsg), aiBubble.querySelector('.chat-bubble__time'));
+          }
+          console.error('Knowledge fetch error:', err);
+        }
+
+        isGenerating = false;
+        abortController = null;
+        updateSendButton();
+        scrollToBottom();
+        renderHistory();
+      }
+
+      function stopGeneration() {
+        if (abortController) {
+          abortController.abort();
+        }
+      }
+
+      function updateSendButton() {
+        if (isGenerating) {
+          sendBtn.innerHTML = `
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+              <rect x="4" y="4" width="16" height="16" rx="2"/>
+            </svg>`;
+          sendBtn.title = '停止生成';
+          sendBtn.classList.add('chat-send-btn--stop');
+        } else {
+          sendBtn.innerHTML = `
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+            </svg>`;
+          sendBtn.title = '发送';
+          sendBtn.classList.remove('chat-send-btn--stop');
+        }
+      }
+
+      function scrollToBottom() {
+        requestAnimationFrame(() => {
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+      }
+
+      function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      // ========== 自动调整输入框高度 ==========
+      chatInput.addEventListener('input', () => {
+        chatInput.style.height = 'auto';
+        chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+      });
+
+      // ========== 事件绑定 ==========
+      sendBtn.addEventListener('click', () => {
+        if (isGenerating) {
+          stopGeneration();
+        } else {
+          sendMessage(chatInput.value);
+        }
+      });
+
+      chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          if (isGenerating) {
+            stopGeneration();
+          } else {
+            sendMessage(chatInput.value);
+          }
+        }
+      });
+
+      newChatBtn.addEventListener('click', newConversation);
+
+      sidebarToggle.addEventListener('click', () => {
+        chatSidebar.classList.toggle('collapsed');
+      });
+
+      quickPrompts.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const prompt = btn.dataset.prompt;
+          if (prompt) {
+            chatInput.value = prompt;
+            sendMessage(prompt);
+          }
+        });
+      });
+
+      // ========== 初始化 ==========
+      if (conversations.length === 0) {
+        const conv = createConversation();
+        conversations.push(conv);
+        activeConvId = conv.id;
+      }
+      renderHistory();
+    })();
+  </script>
+
+</body>
+</html>
