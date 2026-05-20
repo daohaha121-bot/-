@@ -476,249 +476,539 @@
       .chat-bubble { max-width: 90%; }
     }
 
-    /* ===== Book Flip ===== */
-    .book-section { margin-top: 3rem; }
-    .book-section__title {
-      text-align: center; font-size: 1.25rem; font-weight: 700; color: #f1f5f9;
-      margin-bottom: 1.5rem; letter-spacing: 0.04em;
-    }
-    .book-stage { perspective: 1500px; width: 100%; max-width: 700px; margin: 0 auto; }
-    .book-3d { position: relative; width: 100%; height: 300px; transform-style: preserve-3d; }
-    .book-spread {
-      position: absolute; inset: 0; display: flex; backface-visibility: hidden;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.5s ease, transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-      transform: rotateY(90deg);
-    }
-    .book-spread.active { opacity: 1; pointer-events: auto; transform: rotateY(0deg); }
-    .book-spread.flipping-out { opacity: 0; transform: rotateY(-90deg); }
-    .book-page-left, .book-page-right { flex: 1; padding: 1.75rem; display: flex; flex-direction: column; min-height: 280px; }
-    .book-page-left {
-      background: rgba(255,255,255,0.04); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,255,255,0.08); border-radius: 12px 0 0 12px;
-      align-items: center; justify-content: center; gap: 1rem;
-    }
-    .book-page-right {
-      background: rgba(255,255,255,0.06); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,255,255,0.12); border-left: none; border-radius: 0 12px 12px 0; justify-content: center;
-    }
-    .book-skill-icon { font-size: 2.5rem; animation: float 4s ease-in-out infinite; }
-    .book-skill-name { font-size: 1.1rem; font-weight: 700; color: #f1f5f9; text-align: center; line-height: 1.4; }
-    .book-skill-desc { font-size: 0.9rem; color: #cbd5e1; line-height: 1.8; }
-    .book-nav { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 1.25rem; }
-    .book-nav-btn {
-      background: rgba(255,255,255,0.06); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.12); border-radius: 50%; width: 38px; height: 38px;
-      color: #e2e8f0; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center;
-      transition: all 0.2s ease; font-family: inherit;
-    }
-    .book-nav-btn:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.25); color: #fff; }
-    .book-nav-dots { display: flex; gap: 8px; }
-    .book-nav-dot {
-      width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2);
-      cursor: pointer; transition: all 0.3s ease;
-    }
-    .book-nav-dot.active { background: #06b6d4; box-shadow: 0 0 10px rgba(6,182,212,0.5); transform: scale(1.3); }
+    /* ================================================================
+       Page 1 — Vertical Waterfall Layout
+       ================================================================ */
 
-    /* ===== iPhone Mockup ===== */
-    .iphone-section { margin-top: 3rem; display: flex; flex-direction: column; align-items: center; }
-    .iphone-section__title {
-      text-align: center; font-size: 1.25rem; font-weight: 700; color: #f1f5f9;
-      margin-bottom: 2rem; letter-spacing: 0.04em;
+    .page1-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5rem;
+      padding: 2rem 0 4rem;
     }
-    .iphone-bezel {
-      width: 260px; height: 520px; background: #1a1a2e; border-radius: 36px; padding: 10px; position: relative;
-      box-shadow: 0 0 0 2px #2d2d44, 0 0 0 5px #1a1a2e, 0 0 0 6px rgba(255,255,255,0.06), 0 20px 60px rgba(0,0,0,0.5);
-    }
-    .iphone-notch { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 110px; height: 24px; background: #1a1a2e; border-radius: 0 0 14px 14px; z-index: 2; }
-    .iphone-screen {
-      width: 100%; height: 100%; background: linear-gradient(160deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-      border-radius: 28px; padding: 48px 16px 20px; display: flex; align-items: center; justify-content: center; overflow: hidden;
-    }
-    .app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; justify-items: center; }
-    .app-icon { display: flex; flex-direction: column; align-items: center; gap: 6px; text-decoration: none; transition: transform 0.25s cubic-bezier(0.25,0.46,0.45,0.94); cursor: pointer; }
-    .app-icon:hover { transform: scale(1.12); }
-    .app-icon-img { width: 52px; height: 52px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 22px; transition: box-shadow 0.3s ease; }
-    .app-icon:nth-child(1) .app-icon-img { background: linear-gradient(135deg, #06b6d4, #0891b2); }
-    .app-icon:nth-child(2) .app-icon-img { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-    .app-icon:nth-child(3) .app-icon-img { background: linear-gradient(135deg, #ec4899, #db2777); }
-    .app-icon:nth-child(4) .app-icon-img { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
-    .app-icon:hover .app-icon-img { box-shadow: 0 0 20px rgba(6,182,212,0.3), 0 4px 12px rgba(0,0,0,0.3); }
-    .app-icon span { font-size: 10px; color: #cbd5e1; font-weight: 500; letter-spacing: 0.03em; }
 
-    /* ===== Recommended Reading ===== */
-    .recommended-reading { margin-top: 3rem; text-align: center; }
-    .recommended-reading__link {
-      display: inline-block; padding: 1rem 2rem;
-      background: rgba(255,255,255,0.06); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,255,255,0.12); border-radius: 16px;
-      color: #e2e8f0; font-size: 1rem; font-weight: 600; text-decoration: none;
-      transition: all 0.3s ease; position: relative; overflow: hidden;
+    /* ---- Module 1: Wireframe Gear + Cyberpunk Neon Text ---- */
+    .hero-stage {
+      position: relative;
+      width: 100%;
+      min-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
     }
-    .recommended-reading__link::before {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(139,92,246,0.1), rgba(236,72,153,0.1));
-      opacity: 0; transition: opacity 0.3s ease;
-    }
-    .recommended-reading__link:hover {
-      border-color: rgba(6,182,212,0.4); box-shadow: 0 0 24px rgba(6,182,212,0.15);
-      transform: translateY(-2px); color: #fff;
-    }
-    .recommended-reading__link:hover::before { opacity: 1; }
-    .recommended-reading__link span { position: relative; z-index: 1; }
 
-    /* ===== 命运齿轮 ===== */
-    .gears-stage {
-      position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+    /* 主齿轮容器 */
+    .wireframe-gear-wrapper {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 0;
+      width: 500px;
+      height: 500px;
+      animation: gear-rotate 32s linear infinite;
     }
-    .gear {
-      position: absolute; border-radius: 50%;
-      border: 3px dashed rgba(251, 191, 36, 0.18);
-      animation: gear-spin var(--d, 20s) linear infinite;
+    .wireframe-gear {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px dashed rgba(6, 182, 212, 0.25);
+      box-shadow:
+        0 0 80px rgba(6, 182, 212, 0.06),
+        0 0 160px rgba(139, 92, 246, 0.04),
+        inset 0 0 60px rgba(6, 182, 212, 0.04);
     }
-    .gear::after {
-      content: ''; position: absolute; inset: 18%;
-      border-radius: 50%; border: 2px solid rgba(251, 191, 36, 0.12);
+    /* 外圈齿环 */
+    .wireframe-gear::before {
+      content: '';
+      position: absolute;
+      inset: -22px;
+      border-radius: 50%;
+      border: 4px dashed rgba(139, 92, 246, 0.22);
+      animation: gear-rotate 22s linear infinite reverse;
     }
-    .gear::before {
-      content: ''; position: absolute; inset: 35%;
-      border-radius: 50%; background: rgba(251, 191, 36, 0.06);
+    /* 内圈轮毂 */
+    .wireframe-gear::after {
+      content: '';
+      position: absolute;
+      inset: 14%;
+      border-radius: 50%;
+      border: 2px solid rgba(6, 182, 212, 0.18);
+      box-shadow: 0 0 30px rgba(6, 182, 212, 0.08);
     }
-    .gear--xl { width: 420px; height: 420px; top: -120px; left: -140px; --d: 35s; }
-    .gear--lg { width: 320px; height: 320px; bottom: -90px; right: -80px; --d: 28s; animation-direction: reverse; }
-    .gear--md { width: 200px; height: 200px; top: 15%; right: 8%; --d: 20s; }
-    .gear--sm { width: 130px; height: 130px; bottom: 20%; left: 10%; --d: 14s; animation-direction: reverse; }
-    .gear--xs { width: 75px; height: 75px; top: 25%; left: 5%; --d: 9s; }
+    /* 十字辐条 */
+    .gear-spokes {
+      position: absolute;
+      inset: 20%;
+      animation: gear-rotate 32s linear infinite;
+    }
+    .gear-spokes::before,
+    .gear-spokes::after {
+      content: '';
+      position: absolute;
+      background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent);
+    }
+    .gear-spokes::before {
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 2px;
+      transform: translateY(-50%);
+    }
+    .gear-spokes::after {
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      transform: translateX(-50%);
+    }
+    /* 副齿轮（右下角） */
+    .wireframe-gear--sub {
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      bottom: 8%;
+      right: 5%;
+      border-radius: 50%;
+      border: 2px dashed rgba(236, 72, 153, 0.18);
+      animation: gear-rotate 18s linear infinite reverse;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .wireframe-gear--sub::after {
+      content: '';
+      position: absolute;
+      inset: 16%;
+      border-radius: 50%;
+      border: 1px solid rgba(236, 72, 153, 0.12);
+    }
 
-    .gear-ring {
-      position: absolute; border-radius: 50%; border: 1px solid rgba(251, 191, 36, 0.1);
-      animation: gear-spin var(--d, 25s) linear infinite;
-    }
-    .ring--outer { width: 500px; height: 500px; top: 50%; left: 50%; transform: translate(-50%, -50%); --d: 40s; animation-direction: reverse; }
-    .ring--inner { width: 280px; height: 280px; top: 50%; left: 50%; transform: translate(-50%, -50%); --d: 22s; }
-
-    @keyframes gear-spin {
+    @keyframes gear-rotate {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
-    /* Transform fix for centered rings */
-    .ring--outer { animation: gear-spin-outer 40s linear infinite reverse; }
-    .ring--inner { animation: gear-spin-inner 22s linear infinite; }
-    @keyframes gear-spin-outer {
-      from { transform: translate(-50%, -50%) rotate(0deg); }
-      to { transform: translate(-50%, -50%) rotate(360deg); }
+
+    /* 霓虹发光字 */
+    .neon-stage {
+      position: relative;
+      z-index: 2;
+      text-align: center;
     }
-    @keyframes gear-spin-inner {
-      from { transform: translate(-50%, -50%) rotate(0deg); }
-      to { transform: translate(-50%, -50%) rotate(-360deg); }
+    .neon-text {
+      font-family: 'Noto Sans SC', 'Inter', sans-serif;
+      font-size: clamp(1.6rem, 4.5vw, 3.2rem);
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      line-height: 1.4;
+      color: #ffffff;
+      text-shadow:
+        0 0 7px #ffffff,
+        0 0 10px #ffffff,
+        0 0 21px #06b6d4,
+        0 0 42px #06b6d4,
+        0 0 80px #06b6d4,
+        0 0 100px #8b5cf6,
+        0 0 140px #8b5cf6,
+        0 0 180px #ec4899;
+      animation: neon-flicker 3s ease-in-out infinite alternate;
+    }
+    @keyframes neon-flicker {
+      0%, 100% {
+        text-shadow:
+          0 0 7px #ffffff,
+          0 0 10px #ffffff,
+          0 0 21px #06b6d4,
+          0 0 42px #06b6d4,
+          0 0 80px #06b6d4,
+          0 0 100px #8b5cf6,
+          0 0 140px #8b5cf6,
+          0 0 180px #ec4899;
+      }
+      50% {
+        text-shadow:
+          0 0 4px #ffffff,
+          0 0 7px #ffffff,
+          0 0 13px #06b6d4,
+          0 0 26px #06b6d4,
+          0 0 50px #06b6d4,
+          0 0 65px #8b5cf6,
+          0 0 90px #8b5cf6,
+          0 0 120px #ec4899;
+      }
+      75% {
+        text-shadow:
+          0 0 9px #ffffff,
+          0 0 14px #ffffff,
+          0 0 28px #06b6d4,
+          0 0 56px #06b6d4,
+          0 0 100px #06b6d4,
+          0 0 120px #8b5cf6,
+          0 0 160px #8b5cf6,
+          0 0 210px #ec4899;
+      }
+    }
+    .neon-sig {
+      margin-top: 1rem;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: rgba(255, 255, 255, 0.45);
+      letter-spacing: 0.12em;
     }
 
-    /* ===== 核心发光标语 ===== */
-    .slogan-wrapper {
-      position: relative; z-index: 2; text-align: center; margin-bottom: 2.5rem;
+    /* ---- Module 2: 3D Tilt Bento Card ---- */
+    .tilt-stage {
+      perspective: 1200px;
+      width: 100%;
+      max-width: 580px;
     }
-    .slogan-glow {
-      font-family: 'Noto Sans SC', sans-serif;
-      font-size: clamp(1.5rem, 4vw, 2.8rem);
+    .tilt-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 28px;
+      padding: 1.75rem;
+      transform-style: preserve-3d;
+      transition: box-shadow 0.5s ease, border-color 0.5s ease;
+      cursor: default;
+      box-shadow:
+        0 12px 48px rgba(0, 0, 0, 0.35),
+        0 0 0 1px rgba(139, 92, 246, 0.06) inset;
+      will-change: transform;
+    }
+    .tilt-card.is-hover {
+      border-color: rgba(139, 92, 246, 0.35);
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.45),
+        0 0 80px rgba(6, 182, 212, 0.1),
+        0 0 0 1px rgba(6, 182, 212, 0.12) inset;
+    }
+
+    .bento-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      grid-template-rows: auto auto;
+      gap: 1rem;
+    }
+    .bento-cell {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.35s ease, border-color 0.35s ease;
+    }
+
+    /* Cell 1: Avatar */
+    .bento-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #06b6d4, #8b5cf6, #ec4899);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
       font-weight: 700;
-      letter-spacing: 0.06em;
-      line-height: 1.6;
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 0.15em;
+      color: #fff;
+      border: 3px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 40px rgba(139, 92, 246, 0.35);
+      flex-shrink: 0;
     }
-    .slogan-char {
-      display: inline-block;
-      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 30%, #fbbf24 60%, #fcd34d 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-      filter: drop-shadow(0 0 12px rgba(251, 191, 36, 0.4)) drop-shadow(0 0 24px rgba(251, 191, 36, 0.2));
-      animation: char-shimmer 2.5s ease-in-out infinite;
-      animation-delay: calc(var(--i, 0) * 0.08s);
+
+    /* Cell 2: Name + Title */
+    .bento-name {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.05em;
     }
-    .slogan-char:nth-child(1) { --i: 0; } .slogan-char:nth-child(2) { --i: 1; }
-    .slogan-char:nth-child(3) { --i: 2; } .slogan-char:nth-child(4) { --i: 3; }
-    .slogan-char:nth-child(5) { --i: 4; } .slogan-char:nth-child(6) { --i: 5; }
-    .slogan-char:nth-child(7) { --i: 6; } .slogan-char:nth-child(8) { --i: 7; }
-    .slogan-char:nth-child(9) { --i: 8; } .slogan-char:nth-child(10) { --i: 9; }
-    .slogan-char:nth-child(11) { --i: 10; } .slogan-char:nth-child(12) { --i: 11; }
-    .slogan-char:nth-child(13) { --i: 12; } .slogan-char:nth-child(14) { --i: 13; }
-    .slogan-char:nth-child(15) { --i: 14; } .slogan-char:nth-child(16) { --i: 15; }
-    @keyframes char-shimmer {
-      0%, 100% { filter: drop-shadow(0 0 12px rgba(251, 191, 36, 0.4)) drop-shadow(0 0 24px rgba(251, 191, 36, 0.2)); }
-      50% { filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.7)) drop-shadow(0 0 40px rgba(251, 191, 36, 0.4)); }
-    }
-    .slogan-sub {
-      margin-top: 0.75rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.82rem;
-      color: rgba(251, 191, 36, 0.5);
+    .bento-title {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin-top: 0.25rem;
       letter-spacing: 0.08em;
     }
 
-    /* ===== 装饰射线 ===== */
-    .ray-line {
-      position: absolute; z-index: 1; pointer-events: none;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.25), transparent);
-      animation: ray-pulse 3s ease-in-out infinite;
+    /* Cell 3: Bio */
+    .bento-cell--bio {
+      align-items: flex-start;
     }
-    .ray--1 { width: 60%; top: 20%; left: 20%; animation-delay: 0s; }
-    .ray--2 { width: 40%; top: 60%; left: 10%; animation-delay: 1.5s; transform: rotate(-5deg); }
-    .ray--3 { width: 50%; bottom: 30%; right: 5%; animation-delay: 0.8s; transform: rotate(3deg); }
-    @keyframes ray-pulse {
-      0%, 100% { opacity: 0.3; }
-      50% { opacity: 0.8; }
+    .bento-bio {
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      line-height: 1.9;
+      text-align: left;
     }
 
-    /* ===== 公众号订阅卡片 ===== */
-    .wechat-sub-card {
-      position: relative; z-index: 2;
-      display: flex; align-items: center; gap: 1rem;
-      padding: 1rem 1.5rem;
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(251, 191, 36, 0.2);
-      border-radius: 16px;
+    /* Cell 4: Skills */
+    .bento-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .skill-tag {
+      display: inline-block;
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1px solid;
+      letter-spacing: 0.05em;
+    }
+    .skill-tag--cyan {
+      background: rgba(6, 182, 212, 0.15);
+      border-color: rgba(6, 182, 212, 0.35);
+      color: #22d3ee;
+    }
+    .skill-tag--purple {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: rgba(139, 92, 246, 0.35);
+      color: #a78bfa;
+    }
+    .skill-tag--pink {
+      background: rgba(236, 72, 153, 0.15);
+      border-color: rgba(236, 72, 153, 0.35);
+      color: #f472b6;
+    }
+
+    /* ---- Module 3: iPhone 15 Pro Max Skeuomorphic Console ---- */
+    .iphone-3d-stage {
+      perspective: 1000px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    .iphone-3d {
+      width: 280px;
+      height: 560px;
+      background: linear-gradient(180deg, #1a1a2e 0%, #1c1c30 100%);
+      border-radius: 42px;
+      padding: 12px;
+      position: relative;
+      box-shadow:
+        0 0 0 3px #2d2d44,
+        0 0 0 7px #1a1a2e,
+        0 0 0 8px rgba(255, 255, 255, 0.05),
+        0 30px 90px rgba(0, 0, 0, 0.55),
+        0 0 80px rgba(6, 182, 212, 0.08);
+      transform: rotateY(-14deg) rotateX(4deg);
+      animation: iphone-float 6s ease-in-out infinite;
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .iphone-3d:hover {
+      transform: rotateY(-6deg) rotateX(1deg);
+    }
+    @keyframes iphone-float {
+      0%, 100% {
+        transform: rotateY(-14deg) rotateX(4deg) translateY(0);
+      }
+      50% {
+        transform: rotateY(-14deg) rotateX(4deg) translateY(-22px);
+      }
+    }
+
+    /* Dynamic Island */
+    .iphone-island {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 106px;
+      height: 30px;
+      background: #000;
+      border-radius: 22px;
+      z-index: 2;
+    }
+
+    /* Screen */
+    .iphone-screen-inner {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(160deg, #0f172a 0%, #1a1f35 50%, #0f172a 100%);
+      border-radius: 32px;
+      padding: 54px 20px 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .iphone-time-label {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      margin-bottom: 2rem;
+    }
+
+    .app-grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px 28px;
+      justify-items: center;
+      width: 100%;
+    }
+
+    .app-icon-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
       text-decoration: none;
-      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       cursor: pointer;
-      max-width: 380px; width: 90%;
+      transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
-    .wechat-sub-card:hover {
-      border-color: rgba(251, 191, 36, 0.5);
-      background: rgba(251, 191, 36, 0.08);
-      box-shadow: 0 0 32px rgba(251, 191, 36, 0.15), 0 8px 24px rgba(0, 0, 0, 0.3);
-      transform: translateY(-3px);
+    .app-icon-item:hover {
+      transform: scale(1.18);
     }
-    .wechat-sub-icon {
-      flex-shrink: 0;
-      width: 48px; height: 48px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, rgba(7, 193, 96, 0.2), rgba(7, 193, 96, 0.05));
-      display: flex; align-items: center; justify-content: center;
-      color: #07c160;
-    }
-    .wechat-sub-text {
-      display: flex; flex-direction: column; gap: 2px;
-    }
-    .wechat-sub-title {
-      font-size: 0.9rem; font-weight: 600; color: #f1f5f9;
-    }
-    .wechat-sub-desc {
-      font-size: 0.75rem; color: #94a3b8;
-    }
-    .wechat-sub-arrow {
-      margin-left: auto; color: #64748b; transition: color 0.3s ease;
-    }
-    .wechat-sub-card:hover .wechat-sub-arrow { color: #fbbf24; }
 
-    /* 响应式：小屏缩小齿轮 */
+    .app-icon-img {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.35s ease;
+    }
+    .app-icon-item:nth-child(1) .app-icon-img {
+      background: linear-gradient(135deg, #07c160, #05a34f);
+      box-shadow: 0 6px 20px rgba(7, 193, 96, 0.35);
+    }
+    .app-icon-item:nth-child(2) .app-icon-img {
+      background: linear-gradient(135deg, #24292e, #1b1f23);
+      box-shadow: 0 6px 20px rgba(30, 30, 40, 0.5);
+    }
+    .app-icon-item:nth-child(3) .app-icon-img {
+      background: linear-gradient(135deg, #111111, #fe2c55);
+      box-shadow: 0 6px 20px rgba(254, 44, 85, 0.35);
+    }
+    .app-icon-item:nth-child(4) .app-icon-img {
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+    }
+    .app-icon-item:hover .app-icon-img {
+      box-shadow: 0 10px 36px rgba(6, 182, 212, 0.45), 0 0 0 4px rgba(6, 182, 212, 0.15);
+    }
+
+    .app-icon-label {
+      font-size: 11px;
+      color: #94a3b8;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    /* Home indicator bar */
+    .iphone-home-bar {
+      width: 130px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 100px;
+      margin-top: auto;
+    }
+
+    /* ---- Module 4: Recommended Reading Button ---- */
+    .reading-btn-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    .reading-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1.05rem 2.5rem;
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.08));
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      border-radius: 16px;
+      color: #e2e8f0;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      transition: all 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
+      overflow: hidden;
+    }
+    .reading-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #06b6d4, #8b5cf6, #ec4899);
+      opacity: 0;
+      transition: opacity 0.45s ease;
+    }
+    .reading-btn:hover {
+      border-color: rgba(139, 92, 246, 0.6);
+      box-shadow:
+        0 0 48px rgba(6, 182, 212, 0.3),
+        0 0 96px rgba(139, 92, 246, 0.22),
+        0 12px 36px rgba(0, 0, 0, 0.35);
+      transform: translateY(-4px);
+      color: #ffffff;
+    }
+    .reading-btn:hover::before {
+      opacity: 0.12;
+    }
+    .reading-btn span {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ---- Page 1 Responsive ---- */
     @media (max-width: 640px) {
-      .gear--xl { width: 280px; height: 280px; top: -80px; left: -80px; }
-      .gear--lg { width: 200px; height: 200px; bottom: -50px; right: -40px; }
-      .gear--md { width: 130px; height: 130px; }
-      .gear--sm { width: 90px; height: 90px; }
-      .ring--outer { width: 320px; height: 320px; }
-      .ring--inner { width: 180px; height: 180px; }
+      .page1-container {
+        gap: 3rem;
+        padding: 1rem 0 3rem;
+      }
+      .hero-stage {
+        min-height: 70vh;
+      }
+      .wireframe-gear-wrapper {
+        width: 300px;
+        height: 300px;
+      }
+      .wireframe-gear--sub {
+        width: 110px;
+        height: 110px;
+      }
+      .tilt-card {
+        padding: 1.25rem;
+        border-radius: 22px;
+      }
+      .bento-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+      .bento-avatar {
+        width: 60px;
+        height: 60px;
+        font-size: 1.1rem;
+      }
+      .bento-name {
+        font-size: 1.3rem;
+      }
+      .iphone-3d {
+        width: 240px;
+        height: 480px;
+        border-radius: 36px;
+        padding: 10px;
+        animation: none;
+        transform: rotateY(-8deg) rotateX(2deg);
+      }
+      .iphone-screen-inner {
+        border-radius: 28px;
+        padding: 48px 14px 22px;
+      }
     }
 
     /* 滚动条 */
@@ -757,52 +1047,116 @@
   <!-- 主内容区域 -->
   <main class="pt-28 md:pt-32 pb-12 px-4 md:px-8 max-w-5xl mx-auto relative z-10">
 
-    <!-- ==================== 个人名片 ==================== -->
+    <!-- ==================== 页面1：个人名片 · 垂直瀑布流 ==================== -->
     <section class="tab-content active" id="tab-card" role="tabpanel">
 
-      <div class="flex flex-col items-center justify-center min-h-[70vh] relative overflow-hidden py-12">
+      <div class="page1-container">
 
-        <!-- 命运齿轮背景层 (纯 CSS) -->
-        <div class="gears-stage" aria-hidden="true">
-          <div class="gear gear--xl"></div>
-          <div class="gear gear--lg"></div>
-          <div class="gear gear--md"></div>
-          <div class="gear gear--sm"></div>
-          <div class="gear gear--xs"></div>
-          <div class="gear-ring ring--outer"></div>
-          <div class="gear-ring ring--inner"></div>
+        <!-- ======== 模块1：顶部主视觉区 - 命运的齿轮 + 赛博朋克霓虹发光字 ======== -->
+        <div class="hero-stage">
+
+          <!-- 纯CSS线框齿轮背景层 -->
+          <div class="wireframe-gear-wrapper" aria-hidden="true">
+            <div class="wireframe-gear">
+              <div class="gear-spokes"></div>
+            </div>
+          </div>
+          <div class="wireframe-gear--sub" aria-hidden="true"></div>
+
+          <!-- 核心发光标语 + 署名 -->
+          <div class="neon-stage">
+            <h2 class="neon-text">提高自身专注，拥抱时代发展</h2>
+            <p class="neon-sig">—— 到哈哈</p>
+          </div>
         </div>
 
-        <!-- 核心发光标语 -->
-        <div class="slogan-wrapper animate-float">
-          <h2 class="slogan-glow">
-            <span class="slogan-char">用</span><span class="slogan-char">A</span><span class="slogan-char">I</span><span class="slogan-char">赋</span><span class="slogan-char">能</span><span class="slogan-char">行</span><span class="slogan-char">业</span><span class="slogan-char">，</span><span class="slogan-char">做</span><span class="slogan-char">一</span><span class="slogan-char">线</span><span class="slogan-char">的</span><span class="slogan-char">数</span><span class="slogan-char">字</span><span class="slogan-char">极</span><span class="slogan-char">客</span>
-          </h2>
-          <p class="slogan-sub">Empower Industry with AI · Be the Digital Geek</p>
+        <!-- ======== 模块2：3D倾斜个人名片 - Bento Grid布局 ======== -->
+        <div class="tilt-stage" id="tiltStage">
+          <div class="tilt-card" id="tiltCard">
+            <div class="bento-grid">
+              <!-- Cell 1: 头像 -->
+              <div class="bento-cell">
+                <div class="bento-avatar">到</div>
+              </div>
+              <!-- Cell 2: 名字 + 头衔 -->
+              <div class="bento-cell">
+                <div class="bento-name">到哈哈</div>
+                <div class="bento-title">AI应用探索者 · 数字极客</div>
+              </div>
+              <!-- Cell 3: 个人简介 -->
+              <div class="bento-cell bento-cell--bio" style="grid-column: 1 / -1;">
+                <p class="bento-bio">站在AI浪潮前沿的探索者，致力于将AI技术赋能传统行业，做一线的数字极客。相信技术的力量，更相信独立思考的价值。在AI时代，保持清醒与专注，持续进化。</p>
+              </div>
+              <!-- Cell 4: 技能标签矩阵 -->
+              <div class="bento-cell" style="grid-column: 1 / -1;">
+                <div class="bento-skills">
+                  <span class="skill-tag skill-tag--cyan">AI对话</span>
+                  <span class="skill-tag skill-tag--purple">AI视频创作</span>
+                  <span class="skill-tag skill-tag--pink">科学上网</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- 装饰粒子射线 -->
-        <div class="ray-line ray--1"></div>
-        <div class="ray-line ray--2"></div>
-        <div class="ray-line ray--3"></div>
+        <!-- ======== 模块3：数字生活控制台 - iPhone 15 Pro Max 拟物化 ======== -->
+        <div class="iphone-3d-stage">
+          <div class="iphone-3d">
+            <!-- Dynamic Island -->
+            <div class="iphone-island"></div>
+            <!-- 屏幕内容 -->
+            <div class="iphone-screen-inner">
+              <div class="iphone-time-label">9:41</div>
+              <div class="app-grid-2x2">
+                <!-- App 1: 微信公众号 -->
+                <a href="https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=YOUR_BIZ_ID" target="_blank" rel="noopener" class="app-icon-item">
+                  <div class="app-icon-img">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
+                      <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 01.213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 00.167-.054l1.903-1.114a.864.864 0 01.717-.098 10.16 10.16 0 002.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178A1.17 1.17 0 014.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178 1.17 1.17 0 01-1.162-1.178c0-.651.52-1.18 1.162-1.18z"/>
+                    </svg>
+                  </div>
+                  <span class="app-icon-label">微信公众号</span>
+                </a>
+                <!-- App 2: GitHub -->
+                <a href="https://github.com/daohaha121-bot" target="_blank" rel="noopener" class="app-icon-item">
+                  <div class="app-icon-img">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
+                      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                  </div>
+                  <span class="app-icon-label">GitHub</span>
+                </a>
+                <!-- App 3: 抖音 -->
+                <a href="https://www.douyin.com/user/self?from_tab_name=main" target="_blank" rel="noopener" class="app-icon-item">
+                  <div class="app-icon-img">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
+                      <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+                    </svg>
+                  </div>
+                  <span class="app-icon-label">抖音</span>
+                </a>
+                <!-- App 4: 位置 · 济南 -->
+                <a href="https://map.baidu.com/search/%E6%B5%8E%E5%8D%97%E5%B8%82/@13038593,4365595,12z?querytype=s&da_src=shareurl&wd=%E6%B5%8E%E5%8D%97%E5%B8%82&c=288&src=0&wd2=%E5%B1%B1%E4%B8%9C%E7%9C%81%E6%B5%8E%E5%8D%97%E5%B8%82&pn=0&sug=1&l=13&b=%20(13035590,4379408;13083974,4404528)&from=webmap&biz_forward=%7B%22scaler%22:2,%22styles%22:%22pl%22%7D&sug_forward=e6ebd545d2c73bb682a12ee7&device_ratio=2" target="_blank" rel="noopener" class="app-icon-item">
+                  <div class="app-icon-img">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                  </div>
+                  <span class="app-icon-label">山东省济南市</span>
+                </a>
+              </div>
+              <!-- Home Indicator -->
+              <div class="iphone-home-bar"></div>
+            </div>
+          </div>
+        </div>
 
-        <!-- 公众号订阅卡片 -->
-        <a href="https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=YOUR_BIZ_ID" target="_blank" rel="noopener" class="wechat-sub-card">
-          <div class="wechat-sub-icon">
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 01.213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 00.167-.054l1.903-1.114a.864.864 0 01.717-.098 10.16 10.16 0 002.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178A1.17 1.17 0 014.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178 1.17 1.17 0 01-1.162-1.178c0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.512-5.28 1.786-1.72 1.428-2.687 3.72-1.78 6.22.942 2.453 3.666 4.229 6.884 4.229.826 0 1.622-.12 2.361-.336a.722.722 0 01.598.082l1.584.926a.272.272 0 00.14.047c.134 0 .24-.111.24-.247 0-.06-.023-.12-.038-.177l-.327-1.233a.582.582 0 01-.023-.156.49.49 0 01.201-.398C23.024 18.48 24 16.82 24 14.98c0-3.21-2.931-5.952-7.062-6.122zm-2.18 2.769c.535 0 .969.44.969.982a.976.976 0 01-.969.983.976.976 0 01-.969-.983c0-.542.434-.982.97-.982zm4.844 0c.535 0 .969.44.969.982a.976.976 0 01-.969.983.976.976 0 01-.969-.983c0-.542.434-.982.97-.982z"/>
-            </svg>
-          </div>
-          <div class="wechat-sub-text">
-            <span class="wechat-sub-title">订阅我的微信公众号</span>
-            <span class="wechat-sub-desc">扫码关注 · 获取 AI 实战干货</span>
-          </div>
-          <div class="wechat-sub-arrow">
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-          </div>
-        </a>
+        <!-- ======== 模块4：底部推荐阅读 ======== -->
+        <div class="reading-btn-wrapper">
+          <a href="https://mp.weixin.qq.com/s/QNQmDvXXXHiUobRJPoWvDg" target="_blank" rel="noopener" class="reading-btn">
+            <span>📖 AI时代，普通人应该做什么（推荐阅读）</span>
+          </a>
+        </div>
 
       </div>
 
@@ -1227,6 +1581,29 @@
           if (target) { target.classList.add('active'); }
         });
       });
+
+      // ========== Page 1 3D Tilt Card 交互 ==========
+      (function() {
+        const tiltCard = document.getElementById('tiltCard');
+        if (!tiltCard) return;
+
+        tiltCard.addEventListener('mousemove', function(e) {
+          const rect = tiltCard.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          const rotateX = ((y - centerY) / centerY) * -8;
+          const rotateY = ((x - centerX) / centerX) * 10;
+          tiltCard.style.transform = 'rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg)';
+          tiltCard.classList.add('is-hover');
+        });
+
+        tiltCard.addEventListener('mouseleave', function() {
+          tiltCard.style.transform = 'rotateX(0deg) rotateY(0deg)';
+          tiltCard.classList.remove('is-hover');
+        });
+      })();
 
       // ========== 方案B：聊天逻辑（从 GitHub 仓库拉取原始数据库做本地关键词匹配） ==========
       // ★★★ GitHub Raw 数据库地址 —— 如需更换文件路径，修改此处 ★★★
